@@ -35,6 +35,7 @@ class Command
             'method' => 'POST',
             'data' => [],
             'no_signature' => false,
+            'debug' => false,
         ];
 
         for ($i = 1; $i < count($this->argv); $i++) {
@@ -74,6 +75,13 @@ class Command
                     
                 case '--no-signature':
                     $args['no_signature'] = true;
+                    break;
+                    
+                case '-l':
+                    $value = $this->argv[++$i] ?? null;
+                    if ($value === 'debug') {
+                        $args['debug'] = true;
+                    }
                     break;
                     
                 default:
@@ -134,9 +142,19 @@ class Command
                 $invoker->setApiSecret($args['api_secret']);
             }
             
+            if ($args['debug']) {
+                $invoker->setDebug(true);
+            }
+            
             $invoker->setMethod($args['method'])->setData($args['data']);
 
             $result = $invoker->invoke();
+
+            if ($args['debug']) {
+                // In debug mode, output exactly as received without modification
+                echo $result['body'];
+                return $result['success'] ? 0 : $result['status_code'];
+            }
 
             echo "\n" . $result['body'] . "\n\n";
             return 0;

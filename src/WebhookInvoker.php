@@ -13,6 +13,7 @@ class WebhookInvoker
     private ?string $accountSid = null;
     private ?string $apiKey = null;
     private ?string $apiSecret = null;
+    private bool $debug = false;
     private string $twilioCliPath;
 
     public function __construct(
@@ -54,6 +55,12 @@ class WebhookInvoker
     public function setApiSecret(string $secret): self
     {
         $this->apiSecret = $secret;
+        return $this;
+    }
+
+    public function setDebug(bool $debug): self
+    {
+        $this->debug = $debug;
         return $this;
     }
 
@@ -169,6 +176,11 @@ class WebhookInvoker
             $command[] = '--no-signature';
         }
         
+        if ($this->debug) {
+            $command[] = '-l';
+            $command[] = 'debug';
+        }
+        
         foreach ($this->data as $key => $value) {
             $command[] = '--data-urlencode';
             $command[] = "$key=$value";
@@ -238,6 +250,22 @@ class WebhookInvoker
         fclose($pipes[2]);
 
         $exitCode = proc_close($process);
+        
+        if ($this->debug) {
+            // In debug mode, return everything exactly as received without modification
+            $rawOutput = '';
+            if ($error) {
+                $rawOutput .= $error;
+            }
+            if ($output) {
+                $rawOutput .= $output;
+            }
+            return [
+                'status_code' => $exitCode !== 0 ? $exitCode : 200,
+                'body' => $rawOutput,
+                'success' => $exitCode === 0
+            ];
+        }
         
         if ($exitCode !== 0) {
             $errorMessage = $error ?: "Exit code: $exitCode";
