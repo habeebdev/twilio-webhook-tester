@@ -90,8 +90,29 @@ class WebhookInvoker
 
     private function ensurePhoneNumbers(Generator $faker): void
     {
-        $this->data['From'] ??= $_ENV['FROM_PHONE_NUMBER'] ?? getenv('FROM_PHONE_NUMBER') ?: '+1' . $faker->numerify('5#########');
-        $this->data['To'] ??= $_ENV['TO_PHONE_NUMBER'] ?? getenv('TO_PHONE_NUMBER') ?: '+1' . $faker->numerify('5#########');
+        if (!isset($this->data['From'])) {
+            $fromNumber = $_ENV['FROM_PHONE_NUMBER'] ?? getenv('FROM_PHONE_NUMBER');
+            if ($fromNumber) {
+                PhoneNumberValidator::validateE164($fromNumber, 'From');
+                $this->data['From'] = $fromNumber;
+            } else {
+                $this->data['From'] = '+1' . $faker->numerify('5#########');
+            }
+        } else {
+            PhoneNumberValidator::validateE164($this->data['From'], 'From');
+        }
+
+        if (!isset($this->data['To'])) {
+            $toNumber = $_ENV['TO_PHONE_NUMBER'] ?? getenv('TO_PHONE_NUMBER');
+            if ($toNumber) {
+                PhoneNumberValidator::validateE164($toNumber, 'To');
+                $this->data['To'] = $toNumber;
+            } else {
+                $this->data['To'] = '+1' . $faker->numerify('5#########');
+            }
+        } else {
+            PhoneNumberValidator::validateE164($this->data['To'], 'To');
+        }
     }
 
     private function ensureBody(Generator $faker): void

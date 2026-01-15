@@ -112,6 +112,14 @@ class Command
                 return 1;
             }
 
+            // Validate phone numbers in data if present
+            if (isset($args['data']['From'])) {
+                PhoneNumberValidator::validateE164($args['data']['From'], 'From');
+            }
+            if (isset($args['data']['To'])) {
+                PhoneNumberValidator::validateE164($args['data']['To'], 'To');
+            }
+
             $invoker = new WebhookInvoker($args['url'], $args['auth_token'], $args['no_signature']);
             
             if ($args['account_sid']) {
