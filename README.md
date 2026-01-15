@@ -53,7 +53,7 @@ composer require habeebdev/twilio-webhook-tester
 vendor/bin/twilio-webhook https://your-webhook-url.com/webhook
 
 # Or using environment variable
-# Set in .env: TWILIO_WEBHOOK_URL=https://your-webhook-url.com/webhook
+# Set in .env: WEBHOOK_URL=https://your-webhook-url.com/webhook
 vendor/bin/twilio-webhook
 ```
 
@@ -135,7 +135,7 @@ Usage:
   twilio-webhook [WEBHOOK_URL] [OPTIONS]
 
 Arguments:
-  WEBHOOK_URL              The webhook URL to invoke (optional if TWILIO_WEBHOOK_URL is set)
+  WEBHOOK_URL              The webhook URL to invoke (optional if WEBHOOK_URL is set in .env)
 
 Options:
   -a, --auth-token TOKEN   Twilio Auth Token (or set TWILIO_AUTH_TOKEN env var)
@@ -158,8 +158,8 @@ The tool automatically generates realistic test data using [Faker](https://faker
 - **SmsSid**: Same as MessageSid
 - **AccountSid**: Random account SID (format: `AC...`)
 - **MessagingServiceSid**: Random messaging service SID (format: `MG...`)
-- **From**: Random US phone number (E.164 format) or from `TWILIO_FROM` env var
-- **To**: Random US phone number (E.164 format) or from `TWILIO_TO` env var
+- **From**: Random US phone number (E.164 format) or from `FROM_PHONE_NUMBER` env var
+- **To**: Random US phone number (E.164 format) or from `TO_PHONE_NUMBER` env var
 - **Body**: Random English message (20-80 characters)
 - **FromCountry/ToCountry**: "US"
 - **FromState/ToState**: Random US state abbreviation
@@ -243,20 +243,20 @@ TWILIO_AUTH_TOKEN=your_auth_token_here
 **Webhook URL (Optional)**
 ```bash
 # .env file
-TWILIO_WEBHOOK_URL=https://your-webhook-url.com/webhook  # Default webhook URL
+WEBHOOK_URL=https://your-webhook-url.com/webhook  # Default webhook URL
 ```
 
 **Phone Number Defaults (Optional)**
 ```bash
 # .env file
-TWILIO_FROM=+15551234567  # Default From number
-TWILIO_TO=+15559876543    # Default To number
+FROM_PHONE_NUMBER=+15551234567  # Default From number
+TO_PHONE_NUMBER=+15559876543    # Default To number
 ```
 
 **Quick Setup:**
 ```bash
 # Copy the example file
-cp env.example .env
+cp .env.example .env
 
 # Edit .env with your actual credentials
 # The tool automatically loads .env - no need to source it!
@@ -266,9 +266,9 @@ vendor/bin/twilio-webhook https://example.com/webhook
 **Note**: 
 - `TWILIO_ACCOUNT_SID` is required for both authentication options
 - For webhook signature validation, you need either `TWILIO_AUTH_TOKEN` OR (`TWILIO_API_KEY` + `TWILIO_API_SECRET`)
-- `TWILIO_WEBHOOK_URL` can be set in `.env` file to avoid passing URL as argument each time
+- `WEBHOOK_URL` can be set in `.env` file to avoid passing URL as argument each time
 - Command-line arguments take precedence over `.env` file values
-- If `TWILIO_FROM` or `TWILIO_TO` are not set, random phone numbers will be generated
+- If `FROM_PHONE_NUMBER` or `TO_PHONE_NUMBER` are not set, random phone numbers will be generated
 - The `.env` file is gitignored for security. Never commit your actual credentials to version control.
 
 ## Requirements

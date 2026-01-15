@@ -90,8 +90,8 @@ class WebhookInvoker
 
     private function ensurePhoneNumbers(Generator $faker): void
     {
-        $this->data['From'] ??= getenv('TWILIO_FROM') ?: '+1' . $faker->numerify('5#########');
-        $this->data['To'] ??= getenv('TWILIO_TO') ?: '+1' . $faker->numerify('5#########');
+        $this->data['From'] ??= $_ENV['FROM_PHONE_NUMBER'] ?? getenv('FROM_PHONE_NUMBER') ?: '+1' . $faker->numerify('5#########');
+        $this->data['To'] ??= $_ENV['TO_PHONE_NUMBER'] ?? getenv('TO_PHONE_NUMBER') ?: '+1' . $faker->numerify('5#########');
     }
 
     private function ensureBody(Generator $faker): void
@@ -170,8 +170,8 @@ class WebhookInvoker
         
         $twilioVars = ['TWILIO_ACCOUNT_SID', 'TWILIO_API_KEY', 'TWILIO_API_SECRET', 'TWILIO_AUTH_TOKEN'];
         foreach ($twilioVars as $var) {
-            $value = getenv($var);
-            if ($value !== false) {
+            $value = $_ENV[$var] ?? getenv($var);
+            if ($value !== false && $value !== null) {
                 $env[$var] = $value;
             }
         }

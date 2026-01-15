@@ -2,6 +2,7 @@
 
 namespace Twilio\WebhookCli;
 
+use Dotenv\Dotenv;
 use Exception;
 
 class Command
@@ -19,25 +20,8 @@ class Command
             return;
         }
 
-        $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [];
-        
-        foreach ($lines as $line) {
-            $line = trim($line);
-            if (empty($line) || str_starts_with($line, '#')) {
-                continue;
-            }
-
-            if (str_contains($line, '=')) {
-                [$key, $value] = explode('=', $line, 2);
-                $key = trim($key);
-                $value = trim($value, " \t\n\r\0\x0B\"'");
-
-                if (!empty($key) && getenv($key) === false) {
-                    putenv("$key=$value");
-                    $_ENV[$key] = $value;
-                }
-            }
-        }
+        $dotenv = Dotenv::createImmutable(getcwd());
+        $dotenv->load();
     }
 
     private function parseArguments(): array
@@ -99,11 +83,11 @@ class Command
             }
         }
 
-        $args['url'] ??= getenv('TWILIO_WEBHOOK_URL') ?: null;
-        $args['auth_token'] ??= getenv('TWILIO_AUTH_TOKEN') ?: null;
-        $args['account_sid'] ??= getenv('TWILIO_ACCOUNT_SID') ?: null;
-        $args['api_key'] ??= getenv('TWILIO_API_KEY') ?: null;
-        $args['api_secret'] ??= getenv('TWILIO_API_SECRET') ?: null;
+        $args['url'] ??= $_ENV['WEBHOOK_URL'] ?? getenv('WEBHOOK_URL') ?: null;
+        $args['auth_token'] ??= $_ENV['TWILIO_AUTH_TOKEN'] ?? getenv('TWILIO_AUTH_TOKEN') ?: null;
+        $args['account_sid'] ??= $_ENV['TWILIO_ACCOUNT_SID'] ?? getenv('TWILIO_ACCOUNT_SID') ?: null;
+        $args['api_key'] ??= $_ENV['TWILIO_API_KEY'] ?? getenv('TWILIO_API_KEY') ?: null;
+        $args['api_secret'] ??= $_ENV['TWILIO_API_SECRET'] ?? getenv('TWILIO_API_SECRET') ?: null;
 
         return $args;
     }
