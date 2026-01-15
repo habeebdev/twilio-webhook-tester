@@ -235,6 +235,10 @@ class WebhookInvoker
             1 => ['pipe', 'w'],
             2 => ['pipe', 'w']
         ];
+
+        $env = array_merge($env, [
+            'NODE_TLS_REJECT_UNAUTHORIZED' => '0'
+        ]);
         
         $pipes = [];
         $process = proc_open($command, $descriptors, $pipes, null, $env);
