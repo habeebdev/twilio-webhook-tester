@@ -36,6 +36,7 @@ class Command
             'data' => [],
             'no_signature' => false,
             'debug' => false,
+            'insecure' => false,
         ];
 
         for ($i = 1; $i < count($this->argv); $i++) {
@@ -75,6 +76,11 @@ class Command
                     
                 case '--no-signature':
                     $args['no_signature'] = true;
+                    break;
+                    
+                case '--insecure':
+                case '--allow-self-signed':
+                    $args['insecure'] = true;
                     break;
                     
                 case '-l':
@@ -144,6 +150,10 @@ class Command
             
             if ($args['debug']) {
                 $invoker->setDebug(true);
+            }
+            
+            if ($args['insecure']) {
+                $invoker->setInsecure(true);
             }
             
             $invoker->setMethod($args['method'])->setData($args['data']);

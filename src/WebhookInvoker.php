@@ -14,6 +14,7 @@ class WebhookInvoker
     private ?string $apiKey = null;
     private ?string $apiSecret = null;
     private bool $debug = false;
+    private bool $insecure = false;
     private string $twilioCliPath;
 
     public function __construct(
@@ -64,6 +65,12 @@ class WebhookInvoker
         return $this;
     }
 
+    public function setInsecure(bool $insecure): self
+    {
+        $this->insecure = $insecure;
+        return $this;
+    }
+
     public function invoke(): array
     {
         $faker = Factory::create('en_US');
@@ -72,6 +79,7 @@ class WebhookInvoker
         $this->ensurePhoneNumbers($faker);
         $this->ensureBody($faker);
         $this->ensureAccountSids();
+        $this->ensureMessagingServiceSid();
         $this->ensureLocationData($faker);
         $this->ensureAdditionalFields($faker);
         
@@ -130,7 +138,16 @@ class WebhookInvoker
     private function ensureAccountSids(): void
     {
         $this->data['AccountSid'] ??= 'AC' . bin2hex(random_bytes(16));
-        $this->data['MessagingServiceSid'] ??= 'MG' . bin2hex(random_bytes(16));
+    }
+
+    private function ensureMessagingServiceSid(): void
+    {
+        if (!isset($this->data['MessagingServiceSid'])) {
+            $messagingServiceSid = $_ENV['MESSAGING_SERVICE_SID'] ?? getenv('MESSAGING_SERVICE_SID');
+            if ($messagingServiceSid) {
+                $this->data['MessagingServiceSid'] = $messagingServiceSid;
+            }
+        }
     }
 
     private function ensureLocationData(Generator $faker): void
@@ -225,6 +242,10 @@ class WebhookInvoker
             $env['TWILIO_AUTH_TOKEN'] = $this->authToken;
         }
         
+        if ($this->insecure) {
+            $env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
+        }
+        
         return $env;
     }
 
@@ -235,10 +256,6 @@ class WebhookInvoker
             1 => ['pipe', 'w'],
             2 => ['pipe', 'w']
         ];
-
-        $env = array_merge($env, [
-            'NODE_TLS_REJECT_UNAUTHORIZED' => '0'
-        ]);
         
         $pipes = [];
         $process = proc_open($command, $descriptors, $pipes, null, $env);
@@ -301,6 +318,11 @@ class WebhookInvoker
                    "Set TWILIO_ACCOUNT_SID + (TWILIO_API_KEY + TWILIO_API_SECRET) or TWILIO_AUTH_TOKEN";
         }
         
+        if ($this->isSslError($err)) {
+            return "SSL/TLS certificate error.\n" .
+                   "For local testing with self-signed certificates, use: --insecure or --allow-self-signed";
+        }
+        
         if ($this->isTimeoutError($err)) {
             return "Request timed out.\n" .
                    "The webhook server took too long to respond.";
@@ -346,6 +368,17 @@ class WebhookInvoker
         return str_contains($error, 'Could not find profile') ||
                str_contains($error, 'authentication') ||
                str_contains($error, 'unauthorized');
+    }
+
+    private function isSslError(string $error): bool
+    {
+        return str_contains($error, 'certificate') ||
+               str_contains($error, 'SSL') ||
+               str_contains($error, 'TLS') ||
+               str_contains($error, 'UNABLE_TO_VERIFY_LEAF_SIGNATURE') ||
+               str_contains($error, 'CERT_HAS_EXPIRED') ||
+               str_contains($error, 'self signed') ||
+               str_contains($error, 'self-signed');
     }
 
     private function isTimeoutError(string $error): bool
