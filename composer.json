@@ -2,7 +2,7 @@
     "name": "habeebdev/twilio-webhook-tester",
     "description": "PHP wrapper for Twilio CLI webhook plugin - Test Twilio SMS webhooks locally using the Twilio CLI webhook plugin",
     "type": "library",
-    "keywords": ["twilio", "webhook", "cli", "testing", "sms"],
+    "keywords": ["twilio", "webhook", "cli", "webhook-testing", "sms"],
     "license": "MIT",
     "authors": [
         {
