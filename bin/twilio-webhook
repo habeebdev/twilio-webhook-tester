@@ -1,7 +1,23 @@
 #!/usr/bin/env php
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php';
+$dir = __DIR__;
+$autoloadPath = null;
+
+for ($i = 0; $i <= 5; $i++) {
+    $path = $dir . str_repeat('/..', $i) . '/vendor/autoload.php';
+    if (file_exists($path)) {
+        $autoloadPath = $path;
+        break;
+    }
+}
+
+if ($autoloadPath === null) {
+    fwrite(STDERR, "Error: Could not find autoload.php. Please run 'composer install'.\n");
+    exit(1);
+}
+
+require_once $autoloadPath;
 
 use Twilio\WebhookCli\Command;
 
