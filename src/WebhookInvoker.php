@@ -269,11 +269,6 @@ class WebhookInvoker
                    "Set TWILIO_ACCOUNT_SID + (TWILIO_API_KEY + TWILIO_API_SECRET) or TWILIO_AUTH_TOKEN";
         }
         
-        if ($this->isSslError($err)) {
-            return "SSL/TLS certificate error.\n" .
-                   "For local testing, use http:// instead of https://";
-        }
-        
         if ($this->isTimeoutError($err)) {
             return "Request timed out.\n" .
                    "The webhook server took too long to respond.";
@@ -319,13 +314,6 @@ class WebhookInvoker
         return str_contains($error, 'Could not find profile') ||
                str_contains($error, 'authentication') ||
                str_contains($error, 'unauthorized');
-    }
-
-    private function isSslError(string $error): bool
-    {
-        return str_contains($error, 'certificate') ||
-               str_contains($error, 'SSL') ||
-               str_contains($error, 'TLS');
     }
 
     private function isTimeoutError(string $error): bool
