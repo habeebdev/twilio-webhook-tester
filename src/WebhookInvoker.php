@@ -143,7 +143,7 @@ class WebhookInvoker
     private function ensureMessagingServiceSid(): void
     {
         if (!isset($this->data['MessagingServiceSid'])) {
-            $messagingServiceSid = $_ENV['MESSAGING_SERVICE_SID'] ?? getenv('MESSAGING_SERVICE_SID');
+            $messagingServiceSid = $_ENV['TWILIO_MESSAGING_SERVICE_SID'] ?? getenv('TWILIO_MESSAGING_SERVICE_SID');
             if ($messagingServiceSid) {
                 $this->data['MessagingServiceSid'] = $messagingServiceSid;
             }

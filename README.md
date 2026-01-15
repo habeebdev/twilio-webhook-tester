@@ -157,7 +157,7 @@ The tool automatically generates realistic test data using [Faker](https://faker
 - **SmsMessageSid**: Same as MessageSid
 - **SmsSid**: Same as MessageSid
 - **AccountSid**: Random account SID (format: `AC...`)
-- **MessagingServiceSid**: Random messaging service SID (format: `MG...`)
+- **MessagingServiceSid**: From `TWILIO_MESSAGING_SERVICE_SID` env var (if set), otherwise not included
 - **From**: Random US phone number (E.164 format) or from `FROM_PHONE_NUMBER` env var
 - **To**: Random US phone number (E.164 format) or from `TO_PHONE_NUMBER` env var
 - **Body**: Random English message (20-80 characters)
@@ -253,6 +253,12 @@ FROM_PHONE_NUMBER=+15551234567  # Default From number
 TO_PHONE_NUMBER=+15559876543    # Default To number
 ```
 
+**Messaging Service SID (Optional)**
+```bash
+# .env file
+TWILIO_MESSAGING_SERVICE_SID=MGxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  # Messaging Service SID
+```
+
 **Quick Setup:**
 ```bash
 # Copy the example file
@@ -269,6 +275,7 @@ vendor/bin/twilio-webhook https://example.com/webhook
 - `WEBHOOK_URL` can be set in `.env` file to avoid passing URL as argument each time
 - Command-line arguments take precedence over `.env` file values
 - If `FROM_PHONE_NUMBER` or `TO_PHONE_NUMBER` are not set, random phone numbers will be generated
+- `TWILIO_MESSAGING_SERVICE_SID` is optional - if not set, it will not be included in the webhook data
 - The `.env` file is gitignored for security. Never commit your actual credentials to version control.
 
 ## Requirements
