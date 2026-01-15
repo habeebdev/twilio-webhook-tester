@@ -49,22 +49,19 @@ composer require habeebdev/twilio-webhook-tester
 ### Basic Usage
 
 ```bash
-# Test an SMS webhook (using command-line argument)
-php bin/twilio-webhook https://your-webhook-url.com/webhook
+# Test an SMS webhook
+vendor/bin/twilio-webhook https://your-webhook-url.com/webhook
 
 # Or using environment variable
 # Set in .env: TWILIO_WEBHOOK_URL=https://your-webhook-url.com/webhook
-php bin/twilio-webhook
-
-# Or if installed via Composer
-vendor/bin/twilio-webhook https://your-webhook-url.com/webhook
+vendor/bin/twilio-webhook
 ```
 
 ### With Custom Data
 
 ```bash
 # Add custom parameters
-php bin/twilio-webhook https://your-webhook-url.com/webhook \
+vendor/bin/twilio-webhook https://your-webhook-url.com/webhook \
   -d Body="Hello, how are you?" \
   -d From=+15551234567 \
   -d To=+15559876543
@@ -74,10 +71,10 @@ php bin/twilio-webhook https://your-webhook-url.com/webhook \
 
 ```bash
 # Use GET method
-php bin/twilio-webhook https://your-webhook-url.com/webhook --method GET
+vendor/bin/twilio-webhook https://your-webhook-url.com/webhook --method GET
 
 # Use POST method (default)
-php bin/twilio-webhook https://your-webhook-url.com/webhook --method POST
+vendor/bin/twilio-webhook https://your-webhook-url.com/webhook --method POST
 ```
 
 ### Secured Webhooks
@@ -105,19 +102,19 @@ TWILIO_API_SECRET=your_api_secret
 
 Then run:
 ```bash
-php bin/twilio-webhook https://your-webhook-url.com/webhook
+vendor/bin/twilio-webhook https://your-webhook-url.com/webhook
 ```
 
 **Option 2: Using command-line arguments**
 
 ```bash
 # Using Auth Token
-php bin/twilio-webhook https://your-webhook-url.com/webhook \
+vendor/bin/twilio-webhook https://your-webhook-url.com/webhook \
   --account-sid ACxxxxx \
   --auth-token your_auth_token_here
 
 # Using API Key/Secret
-php bin/twilio-webhook https://your-webhook-url.com/webhook \
+vendor/bin/twilio-webhook https://your-webhook-url.com/webhook \
   --account-sid ACxxxxx \
   --api-key SKxxxxx \
   --api-secret your_api_secret
@@ -128,7 +125,7 @@ php bin/twilio-webhook https://your-webhook-url.com/webhook \
 For webhooks that don't validate signatures:
 
 ```bash
-php bin/twilio-webhook https://your-webhook-url.com/webhook --no-signature
+vendor/bin/twilio-webhook https://your-webhook-url.com/webhook --no-signature
 ```
 
 ## Command Options
@@ -176,7 +173,7 @@ The tool automatically generates realistic test data using [Faker](https://faker
 You can override any automatically generated value using the `-d` option:
 
 ```bash
-php bin/twilio-webhook https://your-webhook-url.com/webhook \
+vendor/bin/twilio-webhook https://your-webhook-url.com/webhook \
   -d Body="Custom message" \
   -d From=+15551234567 \
   -d MessageSid=SM1234567890abcdef
@@ -187,7 +184,7 @@ php bin/twilio-webhook https://your-webhook-url.com/webhook \
 ### Example 1: Basic SMS Webhook
 
 ```bash
-php bin/twilio-webhook https://hello-messaging-1111-xxxxxx.twil.io/hello-messaging
+vendor/bin/twilio-webhook https://hello-messaging-1111-xxxxxx.twil.io/hello-messaging
 ```
 
 Expected output (TwiML):
@@ -201,7 +198,7 @@ Expected output (TwiML):
 ### Example 2: Custom SMS Parameters
 
 ```bash
-php bin/twilio-webhook https://your-webhook-url.com/webhook \
+vendor/bin/twilio-webhook https://your-webhook-url.com/webhook \
   -d Body="Hi, how are you doing?" \
   -d From=+15551234567 \
   -d To=+15559876543
@@ -212,10 +209,10 @@ php bin/twilio-webhook https://your-webhook-url.com/webhook \
 ```bash
 # Using .env file (recommended)
 # Add to .env: TWILIO_ACCOUNT_SID=ACxxxxx and TWILIO_AUTH_TOKEN=your_token
-php bin/twilio-webhook https://protected-webhook.twil.io/function
+vendor/bin/twilio-webhook https://protected-webhook.twil.io/function
 
 # Or using command-line arguments
-php bin/twilio-webhook https://protected-webhook.twil.io/function \
+vendor/bin/twilio-webhook https://protected-webhook.twil.io/function \
   --account-sid ACxxxxx \
   --auth-token your_auth_token_here
 ```
@@ -263,7 +260,7 @@ cp env.example .env
 
 # Edit .env with your actual credentials
 # The tool automatically loads .env - no need to source it!
-php bin/twilio-webhook https://example.com/webhook
+vendor/bin/twilio-webhook https://example.com/webhook
 ```
 
 **Note**: 
